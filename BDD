@@ -1,0 +1,956 @@
+-- phpMyAdmin SQL Dump
+-- version 5.0.4
+-- https://www.phpmyadmin.net/
+--
+-- Hôte : localhost
+-- Généré le : ven. 18 déc. 2020 à 16:39
+-- Version du serveur :  10.3.23-MariaDB-0+deb10u1
+-- Version de PHP : 7.3.19-1~deb10u1
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de données : `ppe4`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Admin`
+--
+
+CREATE TABLE `Admin` (
+  `IDPER` int(11) NOT NULL,
+  `LOGIN` varchar(25) NOT NULL,
+  `MDP` varchar(25) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `Admin`
+--
+
+INSERT INTO `Admin` (`IDPER`, `LOGIN`, `MDP`) VALUES
+(2, 'root', 'root');
+
+--
+-- Déclencheurs `Admin`
+--
+DELIMITER $$
+CREATE TRIGGER `PasAnimateur_Admin` BEFORE INSERT ON `Admin` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Animateur WHERE Animateur.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Animateur!';   
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasArtiste_Admin` BEFORE INSERT ON `Admin` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Artiste WHERE Artiste.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Artiste!';   
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasIntervenant_Admin` BEFORE INSERT ON `Admin` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM IntervenantSpe WHERE IntervenantSpe.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà intervenant spé !';   
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasTeufeur_Admin` BEFORE INSERT ON `Admin` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Teufeur WHERE Teufeur.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Teufeur !';   
+END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Adresse`
+--
+
+CREATE TABLE `Adresse` (
+  `IDADRESSE` int(15) NOT NULL,
+  `NUM` varchar(50) NOT NULL,
+  `NOMRUE` varchar(500) NOT NULL,
+  `VILLE` varchar(500) NOT NULL,
+  `REGION` varchar(50) NOT NULL,
+  `DEPARTEMENT` varchar(50) NOT NULL,
+  `LIEUDIT` varchar(500) NOT NULL,
+  `CODEPOSTAL` varchar(8) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `Adresse`
+--
+
+INSERT INTO `Adresse` (`IDADRESSE`, `NUM`, `NOMRUE`, `VILLE`, `REGION`, `DEPARTEMENT`, `LIEUDIT`, `CODEPOSTAL`) VALUES
+(1, '1', 'adrien recouvreur', 'angers', 'pays de la loire', 'maine et loire', '', '49100'),
+(3, '2', 'rue du château ', 'Angers', 'pays de la loire', 'maine et loire', '', '49100'),
+(4, '04', 'rue jean Jaurès', 'Ploufragan', 'Bretagne', 'Morbihan', '', '56000'),
+(5, '6', 'François Hollande', 'Tulle', 'Nouvelle-Aquitaine', 'Corrèze', '', '19000');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Animateur`
+--
+
+CREATE TABLE `Animateur` (
+  `IDPER` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déclencheurs `Animateur`
+--
+DELIMITER $$
+CREATE TRIGGER `PasAdmin_Animateur` BEFORE INSERT ON `Animateur` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Admin WHERE Admin.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà admin!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasArtiste_Animateur` BEFORE INSERT ON `Animateur` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Artiste WHERE Artiste.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Artiste!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasTeufeur_Animateur` BEFORE INSERT ON `Animateur` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Teufeur WHERE Teufeur.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Teufeur!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `Pasintervenant_Animateur` BEFORE INSERT ON `Animateur` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM IntervenantSpe WHERE IntervenantSpe.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Artiste`
+--
+
+CREATE TABLE `Artiste` (
+  `IDPER` int(11) NOT NULL,
+  `IDDOMAINE` int(11) NOT NULL,
+  `SITEWEB` varchar(100) NOT NULL,
+  `PAGEFB` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déclencheurs `Artiste`
+--
+DELIMITER $$
+CREATE TRIGGER `PasAdmin_Artiste` BEFORE INSERT ON `Artiste` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Admin WHERE Admin.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasAnimateur_Artiste` BEFORE INSERT ON `Artiste` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Animateur WHERE Animateur.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasTeufeur_Artiste` BEFORE INSERT ON `Artiste` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Teufeur WHERE Teufeur.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `Pasintervenant_Artiste` BEFORE INSERT ON `Artiste` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM IntervenantSpe WHERE IntervenantSpe.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Atelier`
+--
+
+CREATE TABLE `Atelier` (
+  `IDEVENT` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déclencheurs `Atelier`
+--
+DELIMITER $$
+CREATE TRIGGER `PasConcert_Atelier` BEFORE INSERT ON `Atelier` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDEVENT FROM Concert WHERE Concert.IDEVENT = NEW.IDEVENT))
+THEN SIGNAL SQLSTATE '16460' set message_text = "Impossible, c'est déjà un Atelier!";  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasConférence_Atelier` BEFORE INSERT ON `Atelier` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDEVENT FROM Conference WHERE Conference.IDEVENT = NEW.IDEVENT))
+THEN SIGNAL SQLSTATE '16460' set message_text = "Impossible, c'est déjà un Atelier!";  
+END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Avis`
+--
+
+CREATE TABLE `Avis` (
+  `IDAVIS` int(15) NOT NULL,
+  `IDEVENT` int(15) NOT NULL,
+  `IDTEUFEUR` int(15) NOT NULL,
+  `NOTE` int(15) NOT NULL,
+  `LIBELLEAVIS` varchar(500) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Concert`
+--
+
+CREATE TABLE `Concert` (
+  `IDEVENT` int(11) NOT NULL,
+  `DUREE` int(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déclencheurs `Concert`
+--
+DELIMITER $$
+CREATE TRIGGER `PasAtelier_Concert` BEFORE INSERT ON `Concert` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDEVENT FROM Atelier WHERE Atelier.IDEVENT = NEW.IDEVENT))
+THEN SIGNAL SQLSTATE '16460' set message_text = "Impossible, c'est déjà un Concert!";  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasConference_Concert` BEFORE INSERT ON `Concert` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDEVENT FROM Conference WHERE Conference.IDEVENT = NEW.IDEVENT))
+THEN SIGNAL SQLSTATE '16460' set message_text = "Impossible, c'est déjà un Concert!";  
+END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Conference`
+--
+
+CREATE TABLE `Conference` (
+  `IDEVENT` int(11) NOT NULL,
+  `IDANIMATEUR` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déclencheurs `Conference`
+--
+DELIMITER $$
+CREATE TRIGGER `PasAtelier_Conference` BEFORE INSERT ON `Conference` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDEVENT FROM Atelier WHERE Atelier.IDEVENT = NEW.IDEVENT))
+THEN SIGNAL SQLSTATE '16460' set message_text = "Impossible, c'est déjà une conférence!";  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasConcert_Conference` BEFORE INSERT ON `Conference` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDEVENT FROM Concert WHERE Concert.IDEVENT = NEW.IDEVENT))
+THEN SIGNAL SQLSTATE '16460' set message_text = "Impossible, c'est déjà une conférence!";  
+END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `DeroulementContinuA`
+--
+
+CREATE TABLE `DeroulementContinuA` (
+  `DATE` date NOT NULL,
+  `IDLIEU` int(11) NOT NULL,
+  `IDEVENT` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `DomaineArt`
+--
+
+CREATE TABLE `DomaineArt` (
+  `IDDOMAINE` int(11) NOT NULL,
+  `LIBELLEDOMAINE` varchar(500) NOT NULL,
+  `DESCRIPTIF` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Event`
+--
+
+CREATE TABLE `Event` (
+  `IDEVENT` int(11) NOT NULL,
+  `NOM` varchar(250) NOT NULL,
+  `IDPUBCIBLE` int(11) NOT NULL,
+  `AFFICHE` int(11) NOT NULL,
+  `DATE` date NOT NULL,
+  `HEUREDEBUT` time NOT NULL,
+  `JAUGE` int(11) NOT NULL,
+  `RESUME` varchar(500) NOT NULL,
+  `IDLIEU` int(11) NOT NULL,
+  `IDTARIF` int(15) NOT NULL,
+  `IDSESSION` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Doublure de structure pour la vue `EventConcert_v`
+-- (Voir ci-dessous la vue réelle)
+--
+CREATE TABLE `EventConcert_v` (
+`IdEvent` int(11)
+,`NomEvent` varchar(250)
+,`Publicible` varchar(50)
+,`Affiche` int(11)
+,`Date` date
+,`HeureDebut` time
+,`Jauge` int(11)
+,`Resume` varchar(500)
+,`NomLieu` varchar(50)
+,`NumeroAdresse` varchar(50)
+,`Rue` varchar(500)
+,`Tarif` int(25)
+,`Theme` varchar(50)
+,`DureeConcert` int(10)
+,`NomArtiste` varchar(50)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Doublure de structure pour la vue `Event_v1`
+-- (Voir ci-dessous la vue réelle)
+--
+CREATE TABLE `Event_v1` (
+`IdEvent` int(11)
+,`NomEvent` varchar(250)
+,`Publicible` varchar(50)
+,`Affiche` int(11)
+,`Date` date
+,`HeureDebut` time
+,`Jauge` int(11)
+,`Resume` varchar(500)
+,`NomLieu` varchar(50)
+,`NumeroAdresse` varchar(50)
+,`Rue` varchar(500)
+,`Tarif` int(25)
+,`Theme` varchar(50)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `IntervenantSpe`
+--
+
+CREATE TABLE `IntervenantSpe` (
+  `IDPER` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déclencheurs `IntervenantSpe`
+--
+DELIMITER $$
+CREATE TRIGGER `PasAdmin_Intervenant` BEFORE INSERT ON `IntervenantSpe` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Admin WHERE Admin.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasAnimateur_Intervenant` BEFORE INSERT ON `IntervenantSpe` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Animateur WHERE Animateur.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasArtiste_Intervenant` BEFORE INSERT ON `IntervenantSpe` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Artiste WHERE Artiste.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasTeufeur_Intervenant` BEFORE INSERT ON `IntervenantSpe` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Teufeur WHERE Teufeur.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Lieux`
+--
+
+CREATE TABLE `Lieux` (
+  `IDLIEU` int(11) NOT NULL,
+  `NOM` varchar(50) NOT NULL,
+  `DESCRIPTIF` varchar(500) NOT NULL,
+  `IDADRESSE` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Liste_AnimateursAtelier`
+--
+
+CREATE TABLE `Liste_AnimateursAtelier` (
+  `IDPER` int(11) NOT NULL,
+  `IDEVENT` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Liste_ArtisteConcert`
+--
+
+CREATE TABLE `Liste_ArtisteConcert` (
+  `IDPER` int(11) NOT NULL,
+  `IDEVENT` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Liste_IntervenantsConf`
+--
+
+CREATE TABLE `Liste_IntervenantsConf` (
+  `IDPER` int(11) NOT NULL,
+  `IDEVENT` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Personne`
+--
+
+CREATE TABLE `Personne` (
+  `IDPER` int(11) NOT NULL,
+  `NOM` varchar(50) NOT NULL,
+  `PRENOM` varchar(50) NOT NULL,
+  `TELEPHONE` int(15) NOT NULL,
+  `EMAIL` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `Personne`
+--
+
+INSERT INTO `Personne` (`IDPER`, `NOM`, `PRENOM`, `TELEPHONE`, `EMAIL`) VALUES
+(1, 'jean', 'patrick', 617091599, 'jean.patrick@gmail.com'),
+(2, 'Jotaro', 'Kujo', 6128412, 'jotaro.kujo@gmail.com');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `PublicCible`
+--
+
+CREATE TABLE `PublicCible` (
+  `IDPUBCIBLE` int(11) NOT NULL,
+  `LIBELLEPUBCIBLE` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Réservation`
+--
+
+CREATE TABLE `Réservation` (
+  `IDEVENT` int(15) NOT NULL,
+  `IDTEUFEUR` int(15) NOT NULL,
+  `DATE` date NOT NULL DEFAULT current_timestamp(),
+  `NBPLACES` int(1) NOT NULL,
+  `COUTTOTAL` int(15) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Session`
+--
+
+CREATE TABLE `Session` (
+  `IDSESSION` int(11) NOT NULL,
+  `ANNEE` int(4) NOT NULL,
+  `THEME` varchar(50) NOT NULL,
+  `DESCRIPTIF` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Tarifs`
+--
+
+CREATE TABLE `Tarifs` (
+  `IDTARIF` int(15) NOT NULL,
+  `TARIF` int(25) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Teufeur`
+--
+
+CREATE TABLE `Teufeur` (
+  `IDPER` int(11) NOT NULL,
+  `IDADRESSE` int(11) NOT NULL,
+  `LOGIN` varchar(25) NOT NULL,
+  `MDP` varchar(25) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Déchargement des données de la table `Teufeur`
+--
+
+INSERT INTO `Teufeur` (`IDPER`, `IDADRESSE`, `LOGIN`, `MDP`) VALUES
+(1, 1, 'patrick', 'patrick');
+
+--
+-- Déclencheurs `Teufeur`
+--
+DELIMITER $$
+CREATE TRIGGER `PasAdmin_Teufeur` BEFORE INSERT ON `Teufeur` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Admin WHERE Admin.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasAnimateur_Teufeur` BEFORE INSERT ON `Teufeur` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Animateur WHERE Animateur.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasArtiste_Teufeur` BEFORE INSERT ON `Teufeur` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM Artiste WHERE Artiste.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `PasIntervenant_Teufeur` BEFORE INSERT ON `Teufeur` FOR EACH ROW BEGIN   
+IF (EXISTS (SELECT IDPER FROM IntervenantSpe WHERE IntervenantSpe.IDPER = NEW.IDPER))
+THEN SIGNAL SQLSTATE '16460' set message_text = 'Impossible, il est déjà Intervenant!';  
+END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la vue `EventConcert_v`
+--
+DROP TABLE IF EXISTS `EventConcert_v`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`ppe4`@`%` SQL SECURITY DEFINER VIEW `EventConcert_v`  AS SELECT `Event`.`IDEVENT` AS `IdEvent`, `Event`.`NOM` AS `NomEvent`, `PublicCible`.`LIBELLEPUBCIBLE` AS `Publicible`, `Event`.`AFFICHE` AS `Affiche`, `Event`.`DATE` AS `Date`, `Event`.`HEUREDEBUT` AS `HeureDebut`, `Event`.`JAUGE` AS `Jauge`, `Event`.`RESUME` AS `Resume`, `Lieux`.`NOM` AS `NomLieu`, `Adresse`.`NUM` AS `NumeroAdresse`, `Adresse`.`NOMRUE` AS `Rue`, `Tarifs`.`TARIF` AS `Tarif`, `Session`.`THEME` AS `Theme`, `Concert`.`DUREE` AS `DureeConcert`, `Personne`.`NOM` AS `NomArtiste` FROM (((((((((`Event` join `PublicCible` on(`Event`.`IDPUBCIBLE` = `PublicCible`.`IDPUBCIBLE`)) join `Lieux` on(`Event`.`IDLIEU` = `Lieux`.`IDLIEU`)) join `Adresse` on(`Lieux`.`IDADRESSE` = `Adresse`.`IDADRESSE`)) join `Tarifs` on(`Event`.`IDTARIF` = `Tarifs`.`IDTARIF`)) join `Session` on(`Event`.`IDEVENT` = `Session`.`IDSESSION`)) join `Concert` on(`Concert`.`IDEVENT` = `Event`.`IDEVENT`)) join `Liste_ArtisteConcert` on(`Liste_ArtisteConcert`.`IDEVENT` = `Event`.`IDEVENT`)) join `Artiste` on(`Liste_ArtisteConcert`.`IDPER` = `Artiste`.`IDPER`)) join `Personne` on(`Artiste`.`IDPER` = `Personne`.`IDPER`)) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la vue `Event_v1`
+--
+DROP TABLE IF EXISTS `Event_v1`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`ppe4`@`%` SQL SECURITY DEFINER VIEW `Event_v1`  AS SELECT `Event`.`IDEVENT` AS `IdEvent`, `Event`.`NOM` AS `NomEvent`, `PublicCible`.`LIBELLEPUBCIBLE` AS `Publicible`, `Event`.`AFFICHE` AS `Affiche`, `Event`.`DATE` AS `Date`, `Event`.`HEUREDEBUT` AS `HeureDebut`, `Event`.`JAUGE` AS `Jauge`, `Event`.`RESUME` AS `Resume`, `Lieux`.`NOM` AS `NomLieu`, `Adresse`.`NUM` AS `NumeroAdresse`, `Adresse`.`NOMRUE` AS `Rue`, `Tarifs`.`TARIF` AS `Tarif`, `Session`.`THEME` AS `Theme` FROM (((((`Event` join `PublicCible` on(`Event`.`IDPUBCIBLE` = `PublicCible`.`IDPUBCIBLE`)) join `Lieux` on(`Event`.`IDLIEU` = `Lieux`.`IDLIEU`)) join `Adresse` on(`Lieux`.`IDADRESSE` = `Adresse`.`IDADRESSE`)) join `Tarifs` on(`Event`.`IDTARIF` = `Tarifs`.`IDTARIF`)) join `Session` on(`Event`.`IDEVENT` = `Session`.`IDSESSION`)) ;
+
+--
+-- Index pour les tables déchargées
+--
+
+--
+-- Index pour la table `Admin`
+--
+ALTER TABLE `Admin`
+  ADD PRIMARY KEY (`IDPER`);
+
+--
+-- Index pour la table `Adresse`
+--
+ALTER TABLE `Adresse`
+  ADD PRIMARY KEY (`IDADRESSE`);
+
+--
+-- Index pour la table `Animateur`
+--
+ALTER TABLE `Animateur`
+  ADD PRIMARY KEY (`IDPER`);
+
+--
+-- Index pour la table `Artiste`
+--
+ALTER TABLE `Artiste`
+  ADD PRIMARY KEY (`IDPER`),
+  ADD KEY `IDDOMAINE` (`IDDOMAINE`);
+
+--
+-- Index pour la table `Atelier`
+--
+ALTER TABLE `Atelier`
+  ADD PRIMARY KEY (`IDEVENT`);
+
+--
+-- Index pour la table `Avis`
+--
+ALTER TABLE `Avis`
+  ADD PRIMARY KEY (`IDAVIS`),
+  ADD KEY `IDTEUFEUR` (`IDTEUFEUR`),
+  ADD KEY `IDEVENT` (`IDEVENT`);
+
+--
+-- Index pour la table `Concert`
+--
+ALTER TABLE `Concert`
+  ADD PRIMARY KEY (`IDEVENT`);
+
+--
+-- Index pour la table `Conference`
+--
+ALTER TABLE `Conference`
+  ADD PRIMARY KEY (`IDEVENT`),
+  ADD KEY `IDANIMATEUR` (`IDANIMATEUR`);
+
+--
+-- Index pour la table `DeroulementContinuA`
+--
+ALTER TABLE `DeroulementContinuA`
+  ADD PRIMARY KEY (`DATE`,`IDLIEU`,`IDEVENT`),
+  ADD KEY `IDEVENT` (`IDEVENT`),
+  ADD KEY `IDLIEU` (`IDLIEU`);
+
+--
+-- Index pour la table `DomaineArt`
+--
+ALTER TABLE `DomaineArt`
+  ADD PRIMARY KEY (`IDDOMAINE`);
+
+--
+-- Index pour la table `Event`
+--
+ALTER TABLE `Event`
+  ADD PRIMARY KEY (`IDEVENT`),
+  ADD KEY `IDPUBCIBLE` (`IDPUBCIBLE`),
+  ADD KEY `IDLIEU` (`IDLIEU`),
+  ADD KEY `IDTARIF` (`IDTARIF`),
+  ADD KEY `IDSESSION` (`IDSESSION`);
+
+--
+-- Index pour la table `IntervenantSpe`
+--
+ALTER TABLE `IntervenantSpe`
+  ADD PRIMARY KEY (`IDPER`);
+
+--
+-- Index pour la table `Lieux`
+--
+ALTER TABLE `Lieux`
+  ADD PRIMARY KEY (`IDLIEU`),
+  ADD KEY `IDADRESSE` (`IDADRESSE`);
+
+--
+-- Index pour la table `Liste_AnimateursAtelier`
+--
+ALTER TABLE `Liste_AnimateursAtelier`
+  ADD PRIMARY KEY (`IDPER`,`IDEVENT`),
+  ADD KEY `IDEVENT` (`IDEVENT`),
+  ADD KEY `IDPER` (`IDPER`);
+
+--
+-- Index pour la table `Liste_ArtisteConcert`
+--
+ALTER TABLE `Liste_ArtisteConcert`
+  ADD PRIMARY KEY (`IDPER`,`IDEVENT`),
+  ADD KEY `IDEVENT` (`IDEVENT`),
+  ADD KEY `IDPER` (`IDPER`);
+
+--
+-- Index pour la table `Liste_IntervenantsConf`
+--
+ALTER TABLE `Liste_IntervenantsConf`
+  ADD PRIMARY KEY (`IDPER`,`IDEVENT`),
+  ADD KEY `IDEVENT` (`IDEVENT`),
+  ADD KEY `IDPER` (`IDPER`);
+
+--
+-- Index pour la table `Personne`
+--
+ALTER TABLE `Personne`
+  ADD PRIMARY KEY (`IDPER`);
+
+--
+-- Index pour la table `PublicCible`
+--
+ALTER TABLE `PublicCible`
+  ADD PRIMARY KEY (`IDPUBCIBLE`);
+
+--
+-- Index pour la table `Réservation`
+--
+ALTER TABLE `Réservation`
+  ADD PRIMARY KEY (`IDEVENT`,`IDTEUFEUR`,`DATE`) USING BTREE,
+  ADD KEY `IDTEUFEUR` (`IDTEUFEUR`);
+
+--
+-- Index pour la table `Session`
+--
+ALTER TABLE `Session`
+  ADD PRIMARY KEY (`IDSESSION`);
+
+--
+-- Index pour la table `Tarifs`
+--
+ALTER TABLE `Tarifs`
+  ADD PRIMARY KEY (`IDTARIF`);
+
+--
+-- Index pour la table `Teufeur`
+--
+ALTER TABLE `Teufeur`
+  ADD PRIMARY KEY (`IDPER`),
+  ADD KEY `IDADRESSE` (`IDADRESSE`);
+
+--
+-- AUTO_INCREMENT pour les tables déchargées
+--
+
+--
+-- AUTO_INCREMENT pour la table `Adresse`
+--
+ALTER TABLE `Adresse`
+  MODIFY `IDADRESSE` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT pour la table `Avis`
+--
+ALTER TABLE `Avis`
+  MODIFY `IDAVIS` int(15) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `DomaineArt`
+--
+ALTER TABLE `DomaineArt`
+  MODIFY `IDDOMAINE` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `Event`
+--
+ALTER TABLE `Event`
+  MODIFY `IDEVENT` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `Personne`
+--
+ALTER TABLE `Personne`
+  MODIFY `IDPER` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT pour la table `PublicCible`
+--
+ALTER TABLE `PublicCible`
+  MODIFY `IDPUBCIBLE` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `Session`
+--
+ALTER TABLE `Session`
+  MODIFY `IDSESSION` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT pour la table `Tarifs`
+--
+ALTER TABLE `Tarifs`
+  MODIFY `IDTARIF` int(15) NOT NULL AUTO_INCREMENT;
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `Admin`
+--
+ALTER TABLE `Admin`
+  ADD CONSTRAINT `Admin_ibfk_1` FOREIGN KEY (`IDPER`) REFERENCES `Personne` (`IDPER`);
+
+--
+-- Contraintes pour la table `Animateur`
+--
+ALTER TABLE `Animateur`
+  ADD CONSTRAINT `Animateur_ibfk_1` FOREIGN KEY (`IDPER`) REFERENCES `Personne` (`IDPER`);
+
+--
+-- Contraintes pour la table `Artiste`
+--
+ALTER TABLE `Artiste`
+  ADD CONSTRAINT `Artiste_ibfk_1` FOREIGN KEY (`IDPER`) REFERENCES `Personne` (`IDPER`),
+  ADD CONSTRAINT `Artiste_ibfk_2` FOREIGN KEY (`IDDOMAINE`) REFERENCES `DomaineArt` (`IDDOMAINE`);
+
+--
+-- Contraintes pour la table `Atelier`
+--
+ALTER TABLE `Atelier`
+  ADD CONSTRAINT `Atelier_ibfk_1` FOREIGN KEY (`IDEVENT`) REFERENCES `Event` (`IDEVENT`);
+
+--
+-- Contraintes pour la table `Avis`
+--
+ALTER TABLE `Avis`
+  ADD CONSTRAINT `Avis_ibfk_2` FOREIGN KEY (`IDTEUFEUR`) REFERENCES `Teufeur` (`IDPER`),
+  ADD CONSTRAINT `Avis_ibfk_3` FOREIGN KEY (`IDEVENT`) REFERENCES `Event` (`IDEVENT`);
+
+--
+-- Contraintes pour la table `Concert`
+--
+ALTER TABLE `Concert`
+  ADD CONSTRAINT `Concert_ibfk_1` FOREIGN KEY (`IDEVENT`) REFERENCES `Event` (`IDEVENT`);
+
+--
+-- Contraintes pour la table `Conference`
+--
+ALTER TABLE `Conference`
+  ADD CONSTRAINT `Conference_ibfk_1` FOREIGN KEY (`IDEVENT`) REFERENCES `Event` (`IDEVENT`),
+  ADD CONSTRAINT `Conference_ibfk_2` FOREIGN KEY (`IDANIMATEUR`) REFERENCES `Animateur` (`IDPER`);
+
+--
+-- Contraintes pour la table `DeroulementContinuA`
+--
+ALTER TABLE `DeroulementContinuA`
+  ADD CONSTRAINT `DeroulementContinuA_ibfk_1` FOREIGN KEY (`IDEVENT`) REFERENCES `Atelier` (`IDEVENT`),
+  ADD CONSTRAINT `DeroulementContinuA_ibfk_2` FOREIGN KEY (`IDLIEU`) REFERENCES `Lieux` (`IDLIEU`);
+
+--
+-- Contraintes pour la table `Event`
+--
+ALTER TABLE `Event`
+  ADD CONSTRAINT `Event_ibfk_2` FOREIGN KEY (`IDPUBCIBLE`) REFERENCES `PublicCible` (`IDPUBCIBLE`),
+  ADD CONSTRAINT `Event_ibfk_3` FOREIGN KEY (`IDLIEU`) REFERENCES `Lieux` (`IDLIEU`),
+  ADD CONSTRAINT `Event_ibfk_4` FOREIGN KEY (`IDTARIF`) REFERENCES `Tarifs` (`IDTARIF`),
+  ADD CONSTRAINT `Event_ibfk_5` FOREIGN KEY (`IDSESSION`) REFERENCES `Session` (`IDSESSION`);
+
+--
+-- Contraintes pour la table `IntervenantSpe`
+--
+ALTER TABLE `IntervenantSpe`
+  ADD CONSTRAINT `IntervenantSpe_ibfk_1` FOREIGN KEY (`IDPER`) REFERENCES `Personne` (`IDPER`);
+
+--
+-- Contraintes pour la table `Lieux`
+--
+ALTER TABLE `Lieux`
+  ADD CONSTRAINT `Lieux_ibfk_1` FOREIGN KEY (`IDADRESSE`) REFERENCES `Adresse` (`IDADRESSE`);
+
+--
+-- Contraintes pour la table `Liste_AnimateursAtelier`
+--
+ALTER TABLE `Liste_AnimateursAtelier`
+  ADD CONSTRAINT `Liste_AnimateursAtelier_ibfk_1` FOREIGN KEY (`IDEVENT`) REFERENCES `Atelier` (`IDEVENT`),
+  ADD CONSTRAINT `Liste_AnimateursAtelier_ibfk_2` FOREIGN KEY (`IDPER`) REFERENCES `Animateur` (`IDPER`);
+
+--
+-- Contraintes pour la table `Liste_ArtisteConcert`
+--
+ALTER TABLE `Liste_ArtisteConcert`
+  ADD CONSTRAINT `Liste_ArtisteConcert_ibfk_1` FOREIGN KEY (`IDPER`) REFERENCES `Artiste` (`IDPER`),
+  ADD CONSTRAINT `Liste_ArtisteConcert_ibfk_2` FOREIGN KEY (`IDEVENT`) REFERENCES `Concert` (`IDEVENT`);
+
+--
+-- Contraintes pour la table `Liste_IntervenantsConf`
+--
+ALTER TABLE `Liste_IntervenantsConf`
+  ADD CONSTRAINT `Liste_IntervenantsConf_ibfk_1` FOREIGN KEY (`IDEVENT`) REFERENCES `Conference` (`IDEVENT`),
+  ADD CONSTRAINT `Liste_IntervenantsConf_ibfk_2` FOREIGN KEY (`IDPER`) REFERENCES `IntervenantSpe` (`IDPER`);
+
+--
+-- Contraintes pour la table `Réservation`
+--
+ALTER TABLE `Réservation`
+  ADD CONSTRAINT `Réservation_ibfk_4` FOREIGN KEY (`IDTEUFEUR`) REFERENCES `Teufeur` (`IDPER`),
+  ADD CONSTRAINT `Réservation_ibfk_5` FOREIGN KEY (`IDEVENT`) REFERENCES `Event` (`IDEVENT`);
+
+--
+-- Contraintes pour la table `Teufeur`
+--
+ALTER TABLE `Teufeur`
+  ADD CONSTRAINT `Teufeur_ibfk_1` FOREIGN KEY (`IDPER`) REFERENCES `Personne` (`IDPER`),
+  ADD CONSTRAINT `Teufeur_ibfk_2` FOREIGN KEY (`IDADRESSE`) REFERENCES `Adresse` (`IDADRESSE`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
