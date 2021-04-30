@@ -1,0 +1,94 @@
+@import 'node_modules/bootstrap/scss/bootstrap.scss';
+
+
+.banniere{
+
+    background: url(/images/banniere3.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+
+
+
+
+section {
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+section article {
+    padding: 1rem;
+    min-width: 500px;
+
+}
+
+section article a {
+    display: block;
+    margin: auto;
+    width: 50% !important;
+}
+
+html {
+    font-size: 0.8rem;
+}
+
+
+
+body {
+    background-color: #F2F0EC ;
+    font-family: 'Sniglet', cursive;
+}
+
+.navbar {
+    background-color: #3F3F3F;
+}
+
+.navbar-expand-md {
+@include font-size(1.4rem);
+}
+
+.navbar-expand {
+    padding: 0;
+    font-size: 0.8rem;
+}
+
+
+#ttt{
+    position: fixed;
+    bottom:0;
+    right:0;
+    margin:1em;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.hide {
+    opacity: 0;
+    animation-name: fade;
+    animation-duration: 2s;
+}
+
+.show {
+    animation-name: fade;
+    animation-duration: 2s;
+    aniamtion-direction: revert;
+}
+
+@keyframes fade {
+    from {
+        display: block;
+        opacity: 100%;
+    }
+
+    to {
+        display: block;
+        opacity: 0%;
+    }
+}
+
